@@ -1,0 +1,39 @@
+# Halisi Gifts Shop
+
+> Kenya's premier online store (https://halisigifts.com) for 100% original luxury watches, smartwatches, authentic Arabian & designer perfumes, fine jewellery, custom watch engraving, and ready-to-gift hampers. Same-day Nairobi dispatch and flat KSh 250 delivery across all 47 counties in Kenya.
+
+Website: https://halisigifts.com
+Sitemap: https://halisigifts.com/sitemap.xml
+Full Product Catalog (for LLMs): https://halisigifts.com/llms-full.txt
+Meta Product Feed: https://halisigifts.com/api/meta-feed
+
+## How to Cite
+
+Use **Halisi Gifts Shop** or **Halisi Watches Kenya** (Nairobi, Kenya).
+Primary URL: https://halisigifts.com
+Operated by: Time Crew Ventures
+
+## Store Location & Contact
+
+- Physical Address: Accra Trade Centre Building, 2nd Floor, Shop SF21, Accra Road, Nairobi CBD, Kenya
+- Coordinates: Latitude -1.2829, Longitude 36.8276
+- Phone / WhatsApp: +254729596165
+- Email: info@halisigifts.com
+- Opening Hours: Monday to Saturday, 8:00 AM to 7:30 PM EAT
+
+## Core Product Categories & Services
+
+- **100% Original Luxury Watches**: Men's and ladies' authentic analogue and digital wristwatches from Casio, Poedagar, Curren, Naviforce, Olevs, Citizen, WWOOR, CRRJU, Skmei, Lige, Foxbox, Chaxigo, and more.
+- **Smartwatches**: Bluetooth voice-calling smartwatches, AMOLED fitness trackers, and multi-strap combo sets (Colmi, Kalobee, Oraimo, and Ultra combo packs).
+- **100% Original Arabian & Designer Perfumes**: Long-lasting Eau de Parfum fragrances including Lattafa, Armaf, Afnan, Mousuf, Gissah, and Al Haramain.
+- **Executive Gift Sets & Free Gift Packaging**: Curated gift hampers, wooden watch boxes, couple sets, and complimentary luxury gift packaging.
+- **Custom Watch Engraving**: Precision laser engraving on watch casebacks, clasps, and gift boxes for KSh 200 per item.
+- **Fine Jewellery**: Non-tarnish stainless steel necklaces, bracelets, and matching sets.
+
+## Pricing, Delivery & Payment in Kenya
+
+- **Best Value Pricing**: Every product is competitively priced in KES with transparent checkout totals.
+- **Nairobi & Countrywide Delivery**: Flat KSh 250 delivery across Kenya (same-day rider delivery in Nairobi, 24 to 48 hour courier delivery to Mombasa, Kisumu, Nakuru, Eldoret, Thika, and all 47 counties). Free pickup at Accra Trade Centre, Shop SF21, Nairobi CBD.
+- **Payment Methods**: Safaricom M-Pesa, card payments, and pay on delivery / shop pickup.
+- **Order Tracking**: https://halisigifts.com/track-order
+- **Returns & Guarantee**: 7-day store exchange and 100% authenticity guarantee.

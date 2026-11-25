@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cmty5bari0001wa24rszdd0ia",
+    "name": "Test Admin Product",
+    "slug": "test-admin-product",
+    "description": "Test",
+    "price": "999",
+    "compareAtPrice": null,
+    "priceMin": null,
+    "priceMax": null,
+    "categoryId": "cmsutgf0l0002wa14wg8rh6od",
+    "images": [
+      "/products/casio-square-black.jpg"
+    ],
+    "stock": 0,
+    "sku": "MW-TEST-9999",
+    "isNew": false,
+    "isFeatured": false,
+    "isHotDeal": false,
+    "isActive": true,
+    "statusNote": null,
+    "createdAt": "2026-09-12T08:51:13.086Z",
+    "updatedAt": "2026-09-12T08:51:13.086Z",
+    "category": {
+      "slug": "watches-ladies-analogue",
+      "name": "Ladies' Watches - Analogue"
+    },
+    "variants": []
+  }
+]

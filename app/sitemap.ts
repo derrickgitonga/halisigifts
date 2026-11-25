@@ -1,0 +1,76 @@
+import type { MetadataRoute } from "next";
+import { prisma } from "@/lib/prisma";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://halisigifts.com").replace(/\/+$/, "");
+
+  const staticRoutes: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}`, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
+    { url: `${baseUrl}/llms.txt`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.6 },
+    { url: `${baseUrl}/llms-full.txt`, lastModified: new Date(), changeFrequency: "daily", priority: 0.7 },
+    { url: `${baseUrl}/track-order`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/category/watches-men`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/watches-ladies`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/analogue-watches`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/digital-watches`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/watches-men-analogue`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/watches-men-digital`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/watches-ladies-analogue`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/watches-ladies-digital`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/smart-watches`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/perfumes-fragrances`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/category/jewellery`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
+    { url: `${baseUrl}/category/gifts-accessories`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
+    { url: `${baseUrl}/category/accessories-gift-boxes`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
+    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/shipping-returns`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
+    { url: `${baseUrl}/privacy-policy`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
+    { url: `${baseUrl}/store-locator`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+  ];
+
+  try {
+    const [products, categories] = await Promise.all([
+      prisma.product.findMany({
+        where: { isActive: true },
+        select: { slug: true, updatedAt: true, images: true },
+      }),
+      prisma.category.findMany({
+        select: { slug: true, updatedAt: true },
+      }),
+    ]);
+
+    const categoryRoutes: MetadataRoute.Sitemap = categories.map((c) => ({
+      url: `${baseUrl}/category/${c.slug}`,
+      lastModified: c.updatedAt,
+      changeFrequency: "daily",
+      priority: 0.9,
+    }));
+
+    const productRoutes: MetadataRoute.Sitemap = products.map((p) => {
+      const firstImg = p.images?.[0];
+      const imageUrl = firstImg
+        ? firstImg.startsWith("http")
+          ? firstImg
+          : `${baseUrl}${firstImg.startsWith("/") ? "" : "/"}${firstImg}`
+        : undefined;
+
+      return {
+        url: `${baseUrl}/product/${p.slug}`,
+        lastModified: p.updatedAt,
+        changeFrequency: "daily",
+        priority: 0.8,
+        ...(imageUrl ? { images: [encodeURI(imageUrl)] } : {}),
+      };
+    });
+
+    const uniqueMap = new Map<string, MetadataRoute.Sitemap[number]>();
+    for (const item of [...staticRoutes, ...categoryRoutes, ...productRoutes]) {
+      uniqueMap.set(item.url, item);
+    }
+
+    return Array.from(uniqueMap.values());
+  } catch {
+    return staticRoutes;
+  }
+}

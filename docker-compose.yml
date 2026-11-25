@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: halisi_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-halisi_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-halisi_db}
+    ports:
+      - "127.0.0.1:5432:5432" # only reachable from this machine
+    volumes:
+      - halisi_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-halisi_user} -d ${POSTGRES_DB:-halisi_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: halisi_app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-halisi_user}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-halisi_db}?schema=public
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${AUTH_SECRET:?Set AUTH_SECRET in .env (npx auth secret)}
+      - AUTH_SECRET=${AUTH_SECRET:?Set AUTH_SECRET in .env (npx auth secret)}
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      - CRON_SECRET=${CRON_SECRET:-}
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - FROM_EMAIL=${FROM_EMAIL:-Halisi Gifts <orders@halisigifts.com>}
+      - ORDER_ALERT_EMAIL=${ORDER_ALERT_EMAIL:-}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@halisigifts.com}
+      - SYNC_SECRET_KEY=${SYNC_SECRET_KEY:-}
+      - MAWIMBI_BASE_URL=${MAWIMBI_BASE_URL:-https://www.mawimbigifts.com}
+      - NEXT_PUBLIC_META_PIXEL_ID=${NEXT_PUBLIC_META_PIXEL_ID:-}
+      - META_CAPI_ACCESS_TOKEN=${META_CAPI_ACCESS_TOKEN:-}
+      - META_TEST_EVENT_CODE=${META_TEST_EVENT_CODE:-}
+      - NEXT_PUBLIC_META_DOMAIN_VERIFICATION=${NEXT_PUBLIC_META_DOMAIN_VERIFICATION:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  halisi_postgres_data:
