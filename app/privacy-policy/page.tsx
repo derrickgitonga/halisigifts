@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
               1. Overview and Data Controller
             </h2>
             <p>
-              Halisi Gifts Shop, operated under Time Crew Ventures, is committed to safeguarding the privacy of every visitor and customer. This Privacy Policy outlines our practices concerning the collection, usage, storage, sharing, and protection of your personal information when you visit our website, purchase products, or interact with our services.
+              Halisi Gifts Shop is committed to safeguarding the privacy of every visitor and customer. This Privacy Policy outlines our practices concerning the collection, usage, storage, sharing, and protection of your personal information when you visit our website, purchase products, or interact with our services.
             </p>
             <p>
               By accessing our website, placing an order, or communicating with us via phone, email, or WhatsApp, you acknowledge and agree to the practices described in this policy.
@@ -247,7 +247,7 @@ export default function PrivacyPolicyPage() {
               If you have any questions, requests, or concerns regarding this Privacy Policy or how your personal information is handled, please contact our Data Protection representative:
             </p>
             <div className="bg-background/60 p-4 rounded-lg space-y-1 text-sm border border-black/10">
-              <p><strong>Halisi Gifts Shop / Time Crew Ventures</strong></p>
+              <p><strong>Halisi Gifts Shop</strong></p>
               <p>Accra Road, Accra Trade Centre Building, 2nd Floor, Shop SF21</p>
               <p>Nairobi, Kenya</p>
               <p>Phone / WhatsApp: <a href="tel:+254729596165" className="text-gold font-semibold hover:underline">+254729596165</a></p>

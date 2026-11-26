@@ -22,8 +22,6 @@ const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://halisigifts.com")
 
 const STORE = {
   name: "Halisi Gifts Shop",
-  tillNumber: "8223592",
-  tillName: "Time Crew Ventures",
   whatsapp: "254729596165",
   whatsappDisplay: "+254729596165",
   address: "Accra Trade Centre, 2nd Floor, Shop SF21, Accra Road, Nairobi CBD",
@@ -194,7 +192,7 @@ function paymentBlock(order: EmailOrder) {
       ${
         code
           ? `We received your M-Pesa code <strong>${esc(code)}</strong> and will confirm the payment shortly.`
-          : `Pay <strong>${ksh(order.amountDueNow)}</strong> to Buy Goods Till <strong>${STORE.tillNumber}</strong> (${esc(STORE.tillName)}), then send us the confirmation code on WhatsApp.`
+          : `Amount due via M-Pesa: <strong>${ksh(order.amountDueNow)}</strong>. Our team will follow up shortly to complete your M-Pesa payment and confirm dispatch.`
       }
       ${order.amountDueOnDelivery > 0 ? `<br>Balance on ${order.deliveryMethod === "PICKUP" ? "pickup" : "delivery"}: <strong>${ksh(order.amountDueOnDelivery)}</strong>` : ""}
     </td></tr>

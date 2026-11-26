@@ -93,7 +93,7 @@ export function buildWhatsAppOrderMessage(data: WhatsAppOrderData): string {
   }
   lines.push(`• Total: KES ${data.total.toLocaleString()}`);
 
-  lines.push(`• Payment Method: ${data.paymentMethod === "MPESA" ? "Lipa na M-Pesa (Till 8223592)" : "Cash / Pay at Shop"}`);
+  lines.push(`• Payment Method: ${data.paymentMethod === "MPESA" ? "Lipa na M-Pesa" : "Cash / Pay on Delivery"}`);
 
   if (data.mpesaTransactionCode) {
     lines.push(`• M-Pesa Confirmation: ${data.mpesaTransactionCode}`);

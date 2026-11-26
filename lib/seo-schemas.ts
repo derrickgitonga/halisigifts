@@ -68,7 +68,7 @@ export function getStoreSchema() {
     "@type": "JewelryStore",
     "@id": `${siteUrl}/#store`,
     name: "Halisi Gifts Shop",
-    legalName: "Time Crew Ventures",
+    legalName: "Halisi Gifts Shop",
     alternateName: "Halisi Watches Kenya",
     description: "Premier destination in Nairobi, Kenya for 100% original luxury watches, authentic Arabian and designer perfumes, personalized custom watch engraving, executive gift sets, and customized gift wrappings with secure and fast delivery across Kenya.",
     url: siteUrl,

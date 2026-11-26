@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   applicationName: "Halisi Gifts Shop",
   authors: [{ name: "Halisi Gifts Shop", url: siteUrl }],
   creator: "Halisi Gifts Shop",
-  publisher: "Time Crew Ventures",
+  publisher: "Halisi Gifts Shop",
   formatDetection: {
     email: false,
     address: false,

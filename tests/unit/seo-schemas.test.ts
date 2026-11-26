@@ -23,7 +23,7 @@ describe("AEO, SEO and GEO Schema.org Generators", () => {
     const store = getStoreSchema();
     expect(store["@type"]).toBe("JewelryStore");
     expect(store.name).toBe("Halisi Gifts Shop");
-    expect(store.legalName).toBe("Time Crew Ventures");
+    expect(store.legalName).toBe("Halisi Gifts Shop");
     expect(store.address.streetAddress).toContain("Accra Trade Centre");
     expect(store.address.addressLocality).toBe("Nairobi");
     expect(store.address.addressCountry).toBe("KE");

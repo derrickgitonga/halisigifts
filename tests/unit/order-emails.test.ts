@@ -70,12 +70,13 @@ describe("order numbers", () => {
 });
 
 describe("order emails", () => {
-  it("confirmation includes number, items, totals, till instructions and tracking link", () => {
+  it("confirmation includes number, items, totals, M-Pesa summary and tracking link", () => {
     const { subject, html } = buildOrderConfirmationEmail(order());
     expect(subject).toBe("Order HG-10042 received – Halisi Gifts");
     expect(html).toContain("Asad 100ml");
     expect(html).toContain("KSh 5,200");
-    expect(html).toContain("Till <strong>8223592</strong>");
+    expect(html).toContain("Lipa na M-Pesa");
+    expect(html).not.toContain("8223592");
     expect(html).toContain("/track-order?order=HG-10042");
   });
 
