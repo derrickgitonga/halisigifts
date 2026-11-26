@@ -5,22 +5,21 @@ import Link from "next/link";
 
 const HERO_VIDEO_HTML = `
   <video
+    src="/videos/hero.mp4"
     class="absolute inset-0 h-full w-full object-cover pointer-events-none"
     autoplay
     muted
     loop
     playsinline
-    webkit-playsinline
+    webkit-playsinline="true"
+    x-webkit-airplay="deny"
     preload="auto"
     poster="/videos/hero-poster.jpg"
     disablepictureinpicture
     disableremoteplayback
     aria-hidden="true"
     tabindex="-1"
-  >
-    <source src="/videos/hero.mp4" type="video/mp4" />
-    <source src="/videos/hero.webm" type="video/webm" />
-  </video>
+  ></video>
 `;
 
 export default function MinimalHero() {
@@ -33,20 +32,57 @@ export default function MinimalHero() {
     video.defaultMuted = true;
     video.muted = true;
     video.playsInline = true;
+    video.autoplay = true;
+    video.loop = true;
     video.setAttribute("muted", "");
+    video.setAttribute("autoplay", "");
+    video.setAttribute("loop", "");
     video.setAttribute("playsinline", "");
-    video.setAttribute("webkit-playsinline", "");
+    video.setAttribute("webkit-playsinline", "true");
+
+    let unlocked = false;
+
+    const removeGestureListeners = () => {
+      if (unlocked) return;
+      unlocked = true;
+      window.removeEventListener("touchstart", onUserGesture);
+      window.removeEventListener("touchend", onUserGesture);
+      window.removeEventListener("pointerdown", onUserGesture);
+      window.removeEventListener("click", onUserGesture);
+    };
 
     const tryPlay = () => {
+      video.defaultMuted = true;
+      video.muted = true;
+      video.playsInline = true;
+
+      if (video.readyState === 0) {
+        try {
+          video.load();
+        } catch {
+          // Ignore load errors
+        }
+      }
+
       if (video.paused) {
         const playPromise = video.play();
-        if (playPromise && typeof playPromise.catch === "function") {
-          playPromise.catch(() => {});
+        if (playPromise && typeof playPromise.then === "function") {
+          playPromise
+            .then(() => {
+              if (!video.paused) {
+                removeGestureListeners();
+              }
+            })
+            .catch(() => {});
         }
+      } else {
+        removeGestureListeners();
       }
     };
 
-    tryPlay();
+    const onUserGesture = () => {
+      tryPlay();
+    };
 
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
@@ -58,31 +94,52 @@ export default function MinimalHero() {
       tryPlay();
     };
 
-    const onFirstInteraction = () => {
-      tryPlay();
-      window.removeEventListener("touchstart", onFirstInteraction);
-      window.removeEventListener("pointerdown", onFirstInteraction);
-      window.removeEventListener("click", onFirstInteraction);
+    const onSuspend = () => {
+      if (video.paused) {
+        tryPlay();
+      }
     };
+
+    tryPlay();
+
+    const retryTimer = window.setTimeout(tryPlay, 350);
 
     video.addEventListener("loadedmetadata", tryPlay);
     video.addEventListener("loadeddata", tryPlay);
     video.addEventListener("canplay", tryPlay);
+    video.addEventListener("canplaythrough", tryPlay);
+    video.addEventListener("suspend", onSuspend);
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("pageshow", onPageShow);
-    window.addEventListener("touchstart", onFirstInteraction, { passive: true });
-    window.addEventListener("pointerdown", onFirstInteraction, { passive: true });
-    window.addEventListener("click", onFirstInteraction, { passive: true });
+    window.addEventListener("touchstart", onUserGesture, { passive: true });
+    window.addEventListener("touchend", onUserGesture, { passive: true });
+    window.addEventListener("pointerdown", onUserGesture, { passive: true });
+    window.addEventListener("click", onUserGesture, { passive: true });
+
+    let observer: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver !== "undefined") {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            tryPlay();
+          }
+        },
+        { threshold: 0.1 }
+      );
+      observer.observe(video);
+    }
 
     return () => {
+      window.clearTimeout(retryTimer);
+      observer?.disconnect();
       video.removeEventListener("loadedmetadata", tryPlay);
       video.removeEventListener("loadeddata", tryPlay);
       video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("canplaythrough", tryPlay);
+      video.removeEventListener("suspend", onSuspend);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pageshow", onPageShow);
-      window.removeEventListener("touchstart", onFirstInteraction);
-      window.removeEventListener("pointerdown", onFirstInteraction);
-      window.removeEventListener("click", onFirstInteraction);
+      removeGestureListeners();
     };
   }, []);
 
