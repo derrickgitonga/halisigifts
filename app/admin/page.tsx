@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useMemo, useRef } from "react";
 import Link from "next/link";
-import { getCustomerWhatsAppUrl, getWhatsAppOrderUrl } from "@/lib/whatsapp-order";
+import {
+  buildAdminCustomerStatusMessage,
+  getCustomerWhatsAppUrl,
+  getWhatsAppOrderUrl,
+} from "@/lib/whatsapp-order";
 import ProductDescription from "@/components/product/ProductDescription";
 import BlogManager from "@/components/admin/BlogManager";
 import CrmManager from "@/components/admin/CrmManager";
@@ -352,13 +356,27 @@ export default function AdminPage() {
     }
   };
 
+  const getOrderCustomerMessage = (order: AdminOrder) =>
+    buildAdminCustomerStatusMessage({
+      orderId: order.id,
+      orderNumberDisplay: order.orderNumberDisplay,
+      status: order.status,
+      customerName: order.shippingAddress.fullName,
+      total: order.total,
+      items: order.items.map((item) => ({
+        name: item.product.name,
+        quantity: item.quantity,
+        variantName: item.variantName,
+      })),
+    });
+
   // Copy WhatsApp message to clipboard
   const handleCopyWhatsAppMessage = async (order: AdminOrder) => {
     if (typeof window === "undefined") return;
     try {
-      await navigator.clipboard.writeText(order.whatsAppMessage);
+      await navigator.clipboard.writeText(getOrderCustomerMessage(order));
       setCopiedOrderId(order.id);
-      showToast(`WhatsApp message for Order #${order.id.slice(-6)} copied!`);
+      showToast(`WhatsApp status message for ${order.orderNumberDisplay || `#${order.id.slice(-6)}`} copied!`);
       setTimeout(() => setCopiedOrderId(null), 3000);
     } catch {
       showToast("Failed to copy message", "error");
@@ -1929,8 +1947,9 @@ export default function AdminPage() {
             <div className="space-y-4">
               {orders.map((order) => {
                 const customerPhone = order.shippingAddress.phoneNumber || "";
+                const statusWhatsAppMessage = getOrderCustomerMessage(order);
                 const customerWhatsAppLink = customerPhone
-                  ? getCustomerWhatsAppUrl(customerPhone, order.whatsAppMessage)
+                  ? getCustomerWhatsAppUrl(customerPhone, statusWhatsAppMessage)
                   : getWhatsAppOrderUrl(order.whatsAppPayload);
 
                 const statusColorMap: Record<string, string> = {
@@ -2152,7 +2171,7 @@ export default function AdminPage() {
                               <div>
                                 <span className="text-black/50">Method: </span>
                                 <span className="font-semibold text-black">
-                                  {order.paymentMethod === "MPESA" ? "Lipa na M-Pesa (Till)" : "Cash on Pickup"}
+                                  {order.paymentMethod === "MPESA" ? "Lipa na M-Pesa" : "Cash on Delivery"}
                                 </span>
                               </div>
                               {order.shippingAddress.mpesaTransactionCode && (
@@ -2248,7 +2267,7 @@ export default function AdminPage() {
               </p>
 
               <pre className="p-4 bg-[#F8F9FA] border border-black/15 rounded-xl font-mono text-xs text-black leading-relaxed whitespace-pre-wrap select-all">
-                {selectedOrderForWhatsApp.whatsAppMessage}
+                {getOrderCustomerMessage(selectedOrderForWhatsApp)}
               </pre>
             </div>
 
@@ -2278,7 +2297,7 @@ export default function AdminPage() {
                     selectedOrderForWhatsApp.shippingAddress.phoneNumber
                       ? getCustomerWhatsAppUrl(
                           selectedOrderForWhatsApp.shippingAddress.phoneNumber,
-                          selectedOrderForWhatsApp.whatsAppMessage
+                          getOrderCustomerMessage(selectedOrderForWhatsApp)
                         )
                       : getWhatsAppOrderUrl(selectedOrderForWhatsApp.whatsAppPayload)
                   }

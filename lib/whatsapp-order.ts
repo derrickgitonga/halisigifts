@@ -129,3 +129,58 @@ export function getCustomerWhatsAppUrl(rawPhone: string, message: string): strin
   }
   return `https://wa.me/${formatted}?text=${encodeURIComponent(message)}`;
 }
+
+export interface AdminCustomerStatusData {
+  orderId: string;
+  orderNumberDisplay?: string;
+  status: string;
+  customerName?: string;
+  total: number;
+  items: Array<{
+    name: string;
+    quantity: number;
+    variantName?: string | null;
+  }>;
+}
+
+const STATUS_MESSAGES: Record<string, string> = {
+  PENDING: "We have received your order and our team is reviewing it now.",
+  PROCESSING: "Your order is currently being packed and prepared with care.",
+  PAID: "We have confirmed your payment and your order is being prepared for dispatch.",
+  SHIPPED: "Great news! Your order has been dispatched and is on its way to you.",
+  DELIVERED: "Your order has been delivered. Thank you for shopping with Halisi Gifts Shop!",
+  CANCELLED: "Your order has been cancelled. Reply to this message if you need any help or wish to place a new order.",
+};
+
+export function buildAdminCustomerStatusMessage(data: AdminCustomerStatusData): string {
+  const orderRef = data.orderNumberDisplay || `#${data.orderId.slice(-8).toUpperCase()}`;
+  const firstName = data.customerName?.trim().split(/\s+/)[0] || "Valued Customer";
+  const statusUpper = data.status.toUpperCase();
+  const statusNote =
+    STATUS_MESSAGES[statusUpper] ||
+    `Your order status has been updated to ${statusUpper}.`;
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://halisigifts.com").replace(/\/+$/, "");
+
+  const lines: string[] = [
+    `Hello ${firstName},`,
+    ``,
+    `*Halisi Gifts Shop - Order Update*`,
+    `Order No: *${orderRef}*`,
+    `Current Status: *${statusUpper}*`,
+    ``,
+    statusNote,
+    ``,
+    `*Items:*`,
+    ...data.items.map((item) => {
+      const variant = item.variantName ? ` (${item.variantName})` : "";
+      return `• ${item.quantity}x ${item.name}${variant}`;
+    }),
+    `• Total: KES ${Math.round(data.total).toLocaleString("en-KE")}`,
+    ``,
+    `Track your order anytime: ${siteUrl}/track-order?order=${encodeURIComponent(orderRef)}`,
+    ``,
+    `Thank you for choosing Halisi Gifts Shop.`,
+  ];
+
+  return lines.join("\n");
+}
