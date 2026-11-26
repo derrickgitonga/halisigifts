@@ -67,3 +67,27 @@ export async function getUniqueVariantSku(
     }
   }
 }
+
+export async function getUniqueBlogSlug(
+  prisma: PrismaClient,
+  baseTitleOrSlug: string,
+  excludeBlogId?: string
+): Promise<string> {
+  const cleanBase = generateSlug(baseTitleOrSlug) || `blog-${Date.now()}`;
+  let candidate = cleanBase;
+  let counter = 1;
+
+  while (true) {
+    const existing = await prisma.blogPost.findUnique({
+      where: { slug: candidate },
+      select: { id: true },
+    });
+
+    if (!existing || (excludeBlogId && existing.id === excludeBlogId)) {
+      return candidate;
+    }
+
+    candidate = `${cleanBase}-${counter}`;
+    counter++;
+  }
+}

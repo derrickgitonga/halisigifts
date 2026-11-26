@@ -9,6 +9,8 @@ import { cookies } from "next/headers";
 import { sendCapiEvent } from "@/lib/meta-capi";
 import { sendTikTokEvent } from "@/lib/tiktok-events-api";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { captureCustomerLeadAsync } from "@/lib/crm";
+import { CrmSource } from "@prisma/client";
 import { ZodError } from "zod";
 
 export async function POST(req: NextRequest) {
@@ -229,6 +231,14 @@ export async function POST(req: NextRequest) {
     const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://halisigifts.com").replace(/\/+$/, "");
 
     // Meta Conversions API (CAPI)
+    captureCustomerLeadAsync({
+      name: parsed.shippingAddress.fullName,
+      email: parsed.shippingAddress.email,
+      phone: parsed.phoneNumber || parsed.shippingAddress.phoneNumber,
+      source: CrmSource.CHECKOUT,
+      tags: ["Customer", "Order"],
+    }).catch(() => {});
+
     sendCapiEvent({
       eventName: "Purchase",
       eventId: order.id,

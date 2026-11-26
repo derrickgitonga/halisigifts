@@ -23,6 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/category/gifts-accessories`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
     { url: `${baseUrl}/category/accessories-gift-boxes`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
     { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/shipping-returns`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
     { url: `${baseUrl}/privacy-policy`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
@@ -30,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const [products, categories] = await Promise.all([
+    const [products, categories, blogPosts] = await Promise.all([
       prisma.product.findMany({
         where: { isActive: true },
         select: { slug: true, updatedAt: true, images: true },
@@ -38,7 +39,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       prisma.category.findMany({
         select: { slug: true, updatedAt: true },
       }),
+      prisma.blogPost.findMany({
+        where: { published: true },
+        select: { slug: true, updatedAt: true },
+      }),
     ]);
+
+    const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: post.updatedAt,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
 
     const categoryRoutes: MetadataRoute.Sitemap = categories.map((c) => ({
       url: `${baseUrl}/category/${c.slug}`,
@@ -65,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     const uniqueMap = new Map<string, MetadataRoute.Sitemap[number]>();
-    for (const item of [...staticRoutes, ...categoryRoutes, ...productRoutes]) {
+    for (const item of [...staticRoutes, ...categoryRoutes, ...productRoutes, ...blogRoutes]) {
       uniqueMap.set(item.url, item);
     }
 

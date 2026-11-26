@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo, useRef } from "react";
 import Link from "next/link";
 import { getCustomerWhatsAppUrl, getWhatsAppOrderUrl } from "@/lib/whatsapp-order";
 import ProductDescription from "@/components/product/ProductDescription";
+import BlogManager from "@/components/admin/BlogManager";
+import CrmManager from "@/components/admin/CrmManager";
 
 interface Category {
   id: string;
@@ -186,7 +188,7 @@ export default function AdminPage() {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [newCategoryName, setNewCategoryName] = useState("");
   const [creatingCategory, setCreatingCategory] = useState(false);
-  const [activeAdminTab, setActiveAdminTab] = useState<"catalog" | "categories" | "orders">("catalog");
+  const [activeAdminTab, setActiveAdminTab] = useState<"catalog" | "categories" | "orders" | "blog" | "crm">("catalog");
   const [updatingCategoryId, setUpdatingCategoryId] = useState<string | null>(null);
   const [newCatInputName, setNewCatInputName] = useState("");
   const [creatingCatInline, setCreatingCatInline] = useState(false);
@@ -955,6 +957,36 @@ export default function AdminPage() {
               {orderStats.pending} pending
             </span>
           )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveAdminTab("blog")}
+          className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
+            activeAdminTab === "blog"
+              ? "border-[#266e00] text-[#1B1C1C]"
+              : "border-transparent text-black/50 hover:text-black"
+          }`}
+        >
+          <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+          </svg>
+          Blog &amp; Gift Guides
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveAdminTab("crm")}
+          className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
+            activeAdminTab === "crm"
+              ? "border-[#266e00] text-[#1B1C1C]"
+              : "border-transparent text-black/50 hover:text-black"
+          }`}
+        >
+          <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          CRM &amp; Marketing
         </button>
       </div>
 
@@ -2263,6 +2295,21 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {activeAdminTab === "blog" && <BlogManager onNotify={showToast} />}
+
+      {activeAdminTab === "crm" && (
+        <CrmManager
+          onNotify={showToast}
+          availableProducts={products.map((p) => ({
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            price: p.price,
+            images: p.images,
+          }))}
+        />
       )}
 
       {/* Modal: Add New Product / Edit Product */}

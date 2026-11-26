@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { getOrCreateCartSession } from "@/lib/cart-session";
+import { captureCustomerLeadAsync } from "@/lib/crm";
+import { CrmSource } from "@prisma/client";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -36,6 +38,13 @@ export async function POST(req: NextRequest) {
         lastActiveAt: new Date(),
       },
     });
+
+    captureCustomerLeadAsync({
+      name: cleanName || cartSession.customerName,
+      email: cleanEmail,
+      source: CrmSource.CART,
+      tags: ["Cart Visitor"],
+    }).catch(() => {});
 
     const response = NextResponse.json({
       success: true,

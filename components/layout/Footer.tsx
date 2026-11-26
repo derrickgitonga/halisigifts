@@ -67,6 +67,9 @@ export default function Footer() {
             <Link className="text-white/70 hover:text-gold transition-colors py-0.5" href="/track-order">
               Track Your Order
             </Link>
+            <Link className="text-white/70 hover:text-gold transition-colors py-0.5" href="/blog">
+              Blog &amp; Gift Guides
+            </Link>
             <Link className="text-white/70 hover:text-gold transition-colors py-0.5" href="/shipping-returns">
               Delivery Info
             </Link>

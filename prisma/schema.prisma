@@ -41,6 +41,21 @@ enum PaymentMethod {
   CASH_ON_DELIVERY
 }
 
+enum CrmSource {
+  CHECKOUT
+  CART
+  CONTACT_FORM
+  MANUAL
+  HISTORICAL_SYNC
+}
+
+enum CampaignStatus {
+  DRAFT
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -256,5 +271,80 @@ model PasswordResetToken {
   createdAt DateTime  @default(now())
 
   @@index([email])
+}
+
+model BlogPost {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
+  excerpt    String?  @db.Text
+  content    String   @db.Text
+  coverImage String?
+  author     String   @default("Halisi Gifts Shop")
+  tags       String[] @default([])
+  published  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([published, createdAt])
+}
+
+model CrmContact {
+  id                    String           @id @default(cuid())
+  name                  String
+  email                 String?          @unique
+  phone                 String?
+  normalizedPhone       String?          @unique
+  source                CrmSource        @default(CHECKOUT)
+  tags                  String[]         @default([])
+  notes                 String?
+  marketingEmailsSent   Int              @default(0)
+  marketingWhatsappSent Int              @default(0)
+  lastContactedAt       DateTime?
+  isSubscribedEmail     Boolean          @default(true)
+  isSubscribedWhatsapp  Boolean          @default(true)
+  unsubscribeToken      String           @unique @default(cuid())
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  campaignLogs          CrmCampaignLog[]
+
+  @@index([isSubscribedEmail])
+  @@index([isSubscribedWhatsapp])
+  @@index([createdAt])
+}
+
+model CrmCampaign {
+  id             String           @id @default(cuid())
+  title          String
+  channel        String           @default("EMAIL")
+  subject        String?
+  message        String           @db.Text
+  productIds     String[]         @default([])
+  recipientCount Int              @default(0)
+  sentCount      Int              @default(0)
+  failedCount    Int              @default(0)
+  batchSize      Int              @default(50)
+  nextBatchAt    DateTime?
+  status         CampaignStatus   @default(DRAFT)
+  createdAt      DateTime         @default(now())
+  completedAt    DateTime?
+  logs           CrmCampaignLog[]
+
+  @@index([status, nextBatchAt])
+}
+
+model CrmCampaignLog {
+  id         String      @id @default(cuid())
+  campaignId String
+  campaign   CrmCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contactId  String
+  contact    CrmContact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  channel    String
+  status     String
+  error      String?
+  sentAt     DateTime    @default(now())
+
+  @@index([campaignId])
+  @@index([contactId])
 }
 

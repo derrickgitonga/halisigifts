@@ -1,14 +1,37 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/lib/utils";
 import { imageSrc, useWishlist } from "@/lib/shopper-lists";
-import { getQuickWhatsAppCheckoutUrl } from "@/lib/whatsapp-checkout";
 import RecentlyViewed from "@/components/product/RecentlyViewed";
 
 export default function WishlistView() {
   const { items, remove } = useWishlist();
+  const router = useRouter();
+  const [checkingOutId, setCheckingOutId] = useState<string | null>(null);
+
+  const handleCheckout = async (productId: string) => {
+    setCheckingOutId(productId);
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId, quantity: 1 }),
+      });
+      if (res.ok) {
+        const data = await res.json().catch(() => null);
+        if (typeof data?.count === "number") {
+          window.dispatchEvent(new CustomEvent("cart-count-updated", { detail: { count: data.count } }));
+        }
+        router.push("/checkout");
+      }
+    } finally {
+      setCheckingOutId(null);
+    }
+  };
 
   return (
     <>
@@ -56,18 +79,14 @@ export default function WishlistView() {
                 <p className="text-sm font-bold text-black mt-1 tabular-nums">{formatCurrency(p.price)}</p>
               </div>
               <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
-                <a
-                  href={getQuickWhatsAppCheckoutUrl({
-                    productName: p.name,
-                    productSlug: p.slug,
-                    price: p.price,
-                  })}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-semibold uppercase tracking-wider bg-black text-white px-4 py-2.5 hover:bg-gold transition-colors whitespace-nowrap"
+                <button
+                  type="button"
+                  disabled={checkingOutId === p.id}
+                  onClick={() => handleCheckout(p.id)}
+                  className="text-xs font-semibold uppercase tracking-wider bg-black text-white px-5 py-2.5 hover:bg-gold transition-colors whitespace-nowrap disabled:opacity-60"
                 >
-                  Order on WhatsApp
-                </a>
+                  {checkingOutId === p.id ? "Processing..." : "Checkout"}
+                </button>
                 <button
                   type="button"
                   onClick={() => remove(p.id)}
