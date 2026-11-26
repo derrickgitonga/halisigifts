@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: ["/", "/llms.txt", "/llms-full.txt"],
-        disallow: ["/admin/", "/api/", "/order/"],
+        disallow: ["/admin/", "/api/", "/order/", "/cart", "/checkout", "/wishlist"],
       },
       {
         userAgent: [
@@ -16,13 +16,15 @@ export default function robots(): MetadataRoute.Robots {
           "OAI-SearchBot",
           "PerplexityBot",
           "ClaudeBot",
+          "anthropic-ai",
           "Applebot-Extended",
           "Google-Extended",
         ],
-        allow: ["/", "/llms.txt", "/llms-full.txt", "/product/", "/category/"],
-        disallow: ["/admin/", "/api/", "/order/"],
+        allow: ["/", "/llms.txt", "/llms-full.txt", "/product/", "/category/", "/collections/", "/blog/"],
+        disallow: ["/admin/", "/api/", "/order/", "/cart", "/checkout", "/wishlist"],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }

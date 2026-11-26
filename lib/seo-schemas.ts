@@ -8,6 +8,36 @@ export interface FaqItem {
   answer: string;
 }
 
+export function getOrganizationSchema() {
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://halisigifts.com").replace(/\/+$/, "");
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${siteUrl}/#organization`,
+    name: "Halisi Gifts",
+    alternateName: ["Halisi Gifts Shop", "Halisi Watches Kenya"],
+    url: siteUrl,
+    logo: {
+      "@type": "ImageObject",
+      url: `${siteUrl}/halisi-logo.png`,
+    },
+    description:
+      "Halisi Gifts is a verified Kenyan online gift shop and watch retailer offering 100% authentic wristwatches, smartwatches, original Arabian perfumes, and curated gift sets with same-day Nairobi delivery and flat KES 250 countrywide shipping across Kenya.",
+    areaServed: "KE",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+254729596165",
+      contactType: "customer service",
+      areaServed: "KE",
+      availableLanguage: ["en", "sw"],
+    },
+    sameAs: [
+      "https://wa.me/254729596165",
+    ],
+  };
+}
+
 export function getWebSiteSchema() {
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://halisigifts.com").replace(/\/+$/, "");
 

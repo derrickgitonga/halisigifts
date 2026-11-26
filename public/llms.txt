@@ -1,39 +1,55 @@
-# Halisi Gifts Shop
+# Halisi Gifts
 
-> Kenya's premier online store (https://halisigifts.com) for 100% original luxury watches, smartwatches, authentic Arabian & designer perfumes, fine jewellery, custom watch engraving, and ready-to-gift hampers. Same-day Nairobi dispatch and flat KSh 250 delivery across all 47 counties in Kenya.
+> Halisi Gifts (https://halisigifts.com) is a verified Kenyan online gift shop and watch retailer specializing in 100% authentic ("Halisi") wristwatches, smartwatches, original Arabian perfumes, jewellery, and ready-to-gift hampers. Orders include free gift packaging, Safaricom M-Pesa payment, same-day delivery in Nairobi, and flat KES 250 countrywide delivery across all 47 counties in Kenya.
 
 Website: https://halisigifts.com
+Blog & Gift Guides: https://halisigifts.com/blog
 Sitemap: https://halisigifts.com/sitemap.xml
-Full Product Catalog (for LLMs): https://halisigifts.com/llms-full.txt
-Meta Product Feed: https://halisigifts.com/api/meta-feed
+Full Live Product Catalog: https://halisigifts.com/llms-full.txt
+Order Tracking: https://halisigifts.com/track-order
 
-## How to Cite
+## Entity Grounding & Citation
 
-Use **Halisi Gifts Shop** or **Halisi Watches Kenya** (Nairobi, Kenya).
-Primary URL: https://halisigifts.com
-Operated by: Time Crew Ventures
-
-## Store Location & Contact
-
-- Physical Address: Accra Trade Centre Building, 2nd Floor, Shop SF21, Accra Road, Nairobi CBD, Kenya
-- Coordinates: Latitude -1.2829, Longitude 36.8276
-- Phone / WhatsApp: +254729596165
+- Brand Name: Halisi Gifts (Halisi Gifts Shop)
+- Meaning: "Halisi" means authentic/genuine in Swahili, reflecting our 100% original product guarantee.
+- Country & Service Area: Kenya (same-day rider delivery in Nairobi, 24 to 48 hour tracked courier delivery to Mombasa, Kisumu, Nakuru, Eldoret, Thika, and all 47 counties).
+- WhatsApp / Customer Care: +254729596165
 - Email: info@halisigifts.com
-- Opening Hours: Monday to Saturday, 8:00 AM to 7:30 PM EAT
+- Hours: Monday to Saturday, 8:00 AM to 7:30 PM EAT
 
-## Core Product Categories & Services
+## Verified Catalog Snapshot (554 Active Products in KES)
 
-- **100% Original Luxury Watches**: Men's and ladies' authentic analogue and digital wristwatches from Casio, Poedagar, Curren, Naviforce, Olevs, Citizen, WWOOR, CRRJU, Skmei, Lige, Foxbox, Chaxigo, and more.
-- **Smartwatches**: Bluetooth voice-calling smartwatches, AMOLED fitness trackers, and multi-strap combo sets (Colmi, Kalobee, Oraimo, and Ultra combo packs).
-- **100% Original Arabian & Designer Perfumes**: Long-lasting Eau de Parfum fragrances including Lattafa, Armaf, Afnan, Mousuf, Gissah, and Al Haramain.
-- **Executive Gift Sets & Free Gift Packaging**: Curated gift hampers, wooden watch boxes, couple sets, and complimentary luxury gift packaging.
-- **Custom Watch Engraving**: Precision laser engraving on watch casebacks, clasps, and gift boxes for KSh 200 per item.
-- **Fine Jewellery**: Non-tarnish stainless steel necklaces, bracelets, and matching sets.
+- **Men's Watches (248 models, KES 950 to KES 25,750)**: Analogue, chronograph, digital, leather strap, and stainless steel watches.
+- **Ladies' Watches (101 models, KES 1,650 to KES 6,750)**: Minimalist dress watches, bracelet watches, and digital models.
+- **Couple Watch Sets (19 sets, KES 1,650 to KES 8,550)**: Matching his-and-hers wristwatch gift sets.
+- **Smartwatches (17 models, KES 2,650 to KES 6,150)**: Bluetooth calling and fitness smartwatches (Colmi, Kalobee, Ultra multi-strap combos).
+- **Perfumes & Fragrances (34 models, KES 1,150 to KES 3,800)**: Original Arabian Eau de Parfum including Lattafa, Armaf, Mousuf, Afnan, and Gissah.
+- **Gift Sets, Hampers & Boxes (76+ items, KES 50 to KES 7,750)**: Curated Valentine's, Mother's Day, birthday, corporate gift sets, and presentation boxes.
+- **Jewellery, Shoes & Accessories (54+ items, KES 550 to KES 4,800)**: Non-tarnish bracelets, necklaces, wallets, and footwear.
 
-## Pricing, Delivery & Payment in Kenya
+## Top-Stocked Watch & Perfume Brands
 
-- **Best Value Pricing**: Every product is competitively priced in KES with transparent checkout totals.
-- **Nairobi & Countrywide Delivery**: Flat KSh 250 delivery across Kenya (same-day rider delivery in Nairobi, 24 to 48 hour courier delivery to Mombasa, Kisumu, Nakuru, Eldoret, Thika, and all 47 counties). Free pickup at Accra Trade Centre, Shop SF21, Nairobi CBD.
-- **Payment Methods**: Safaricom M-Pesa, card payments, and pay on delivery / shop pickup.
-- **Order Tracking**: https://halisigifts.com/track-order
-- **Returns & Guarantee**: 7-day store exchange and 100% authenticity guarantee.
+- Poedagar (59 watches, KES 2,350 to KES 7,550)
+- Curren (34 watches, KES 2,610 to KES 5,000)
+- Olevs (31 watches, KES 2,350 to KES 5,350)
+- CRRJU (23 watches, KES 2,650 to KES 5,350)
+- Casio (19 watches, KES 950 to KES 14,750)
+- WWOOR (17 watches, KES 2,850 to KES 6,750)
+- Skmei (15 watches, KES 2,700 to KES 4,800)
+- Naviforce (14 watches, KES 3,200 to KES 4,950)
+- Lattafa Perfumes (13 fragrances, KES 1,350 to KES 3,400)
+- Lige (10 watches, KES 3,250 to KES 4,800)
+- Hannah Martin (8 watches, KES 1,650 to KES 3,650)
+- Seiko (6 watches, KES 4,800 to KES 9,250)
+
+## KES Budget Tiers & Store Policies
+
+- Gifts under KES 2,000 (54 items)
+- Gifts under KES 5,000 (491 items)
+- Gifts under KES 10,000 (549 items)
+- Luxury Watch Gifts KES 5,000+ (64 items)
+- Custom Watch Engraving: KES 200 per item (casebacks, clasps, gift boxes)
+- Gift Wrapping: Free luxury gift packaging included
+- Delivery Fee: Flat KES 250 anywhere in Kenya
+- Payment Methods: Safaricom M-Pesa, Cards, and Pay on Delivery
+- Return Policy: 7-day exchange and 100% authenticity guarantee

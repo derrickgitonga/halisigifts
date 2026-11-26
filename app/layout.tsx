@@ -4,7 +4,7 @@ import CartDrawer from "@/components/cart/CartDrawer";
 import MetaPixel from "@/components/analytics/MetaPixel";
 import TikTokPixel from "@/components/analytics/TikTokPixel";
 import JsonLd from "@/components/seo/JsonLd";
-import { getWebSiteSchema, getStoreSchema } from "@/lib/seo-schemas";
+import { getOrganizationSchema, getWebSiteSchema, getStoreSchema } from "@/lib/seo-schemas";
 import "./globals.css";
 
 const bodyFont = Montserrat({
@@ -33,11 +33,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Halisi Gifts Shop - Original Luxury Watches, Perfumes & Gifts in Kenya",
-    template: "%s | Halisi Gifts Shop",
+    default: "Halisi Gifts | Original Watches & Gifts in Nairobi, Kenya",
+    template: "%s | Halisi Gifts",
   },
   description:
-    "Halisi Gifts Shop is Kenya's premier store for 100% original luxury watches, authentic Arabian & designer perfumes, executive gift sets, and custom watch engraving. Shop genuine timepieces and original fragrances with customized wrappings and secure fast delivery across Kenya and shop pickup in Nairobi CBD.",
+    "Shop 100% authentic watches, Arabian perfumes, and curated gift sets in Kenya. Free gift wrapping, M-Pesa accepted, and same-day Nairobi delivery.",
   applicationName: "Halisi Gifts Shop",
   authors: [{ name: "Halisi Gifts Shop", url: siteUrl }],
   creator: "Halisi Gifts Shop",
@@ -86,19 +86,19 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${siteUrl}/hero-bg.jpg`,
+        url: `${siteUrl}/videos/hero-poster.jpg`,
         width: 1200,
         height: 630,
-        alt: "Halisi Gifts Shop - Original Luxury Watches and Authentic Perfumes in Kenya",
+        alt: "Halisi Gifts - Authentic Wristwatches and Curated Gift Sets in Nairobi, Kenya",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Halisi Gifts Shop - Original Luxury Watches, Authentic Perfumes & Gifts in Kenya",
+    title: "Halisi Gifts | Original Watches & Gifts in Nairobi, Kenya",
     description:
-      "Shop 100% original luxury watches, authentic Arabian perfumes, custom engraving, customized wrappings, and executive gifts with secure and fast delivery in Kenya.",
-    images: [`${siteUrl}/hero-bg.jpg`],
+      "Shop 100% authentic watches, Arabian perfumes, and curated gift sets in Kenya. Free gift wrapping, M-Pesa accepted, and same-day Nairobi delivery.",
+    images: [`${siteUrl}/videos/hero-poster.jpg`],
   },
   robots: {
     index: true,
@@ -118,6 +118,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = getOrganizationSchema();
   const websiteSchema = getWebSiteSchema();
   const storeSchema = getStoreSchema();
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim() || "";
@@ -126,7 +127,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="light">
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
         {metaDomainVerification && (
           <meta name="facebook-domain-verification" content={metaDomainVerification} />
         )}
@@ -136,6 +137,7 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=swap"
         />
+        <JsonLd schema={organizationSchema} />
         <JsonLd schema={websiteSchema} />
         <JsonLd schema={storeSchema} />
       </head>
