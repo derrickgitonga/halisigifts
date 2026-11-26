@@ -8,14 +8,14 @@ import { resolveDelivery } from "@/lib/delivery";
 import { cookies } from "next/headers";
 import { sendCapiEvent } from "@/lib/meta-capi";
 import { sendTikTokEvent } from "@/lib/tiktok-events-api";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { captureCustomerLeadAsync } from "@/lib/crm";
 import { CrmSource } from "@prisma/client";
 import { ZodError } from "zod";
 
 export async function POST(req: NextRequest) {
   try {
-    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
+    const clientIp = getClientIp(req);
     const rateLimit = checkRateLimit(`checkout:${clientIp}`, { limit: 20, windowMs: 60 * 1000 });
     if (!rateLimit.allowed) {
       return NextResponse.json(

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/auth-guard";
 import { getUniqueBlogSlug } from "@/lib/slug";
-import { invalidateBlogCache } from "@/lib/blog";
+import { invalidateBlogCache, sanitizeBlogHtml } from "@/lib/blog";
 
 export async function GET(req: NextRequest) {
   const authCheck = await requireAdminSession();
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const title = (body.title || "").trim();
-    const content = (body.content || "").trim();
+    const content = sanitizeBlogHtml((body.content || "").trim());
 
     if (!title) {
       return NextResponse.json(

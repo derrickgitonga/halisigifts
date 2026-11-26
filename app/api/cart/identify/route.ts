@@ -3,11 +3,19 @@ import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { getOrCreateCartSession } from "@/lib/cart-session";
 import { captureCustomerLeadAsync } from "@/lib/crm";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { CrmSource } from "@prisma/client";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
+  const rl = checkRateLimit(`cart-identify:${getClientIp(req)}`, { limit: 15, windowMs: 60 * 1000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds) } }
+    );
+  }
   try {
     const body = await req.json();
     const { email, customerName } = body;

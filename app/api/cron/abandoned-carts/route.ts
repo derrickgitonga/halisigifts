@@ -1,31 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { processAbandonedCarts } from "@/lib/cron/abandoned-carts";
+import { checkRateLimit, getClientIp, safeCompareSecret } from "@/lib/rate-limit";
 
 function isAuthorized(req: NextRequest): boolean {
-  const cronSecret = process.env.CRON_SECRET;
+  const cronSecret = process.env.CRON_SECRET?.trim();
   const authHeader = req.headers.get("authorization");
+  const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
   const querySecret = req.nextUrl.searchParams.get("secret") || req.nextUrl.searchParams.get("key");
 
   if (cronSecret) {
-    if (authHeader === `Bearer ${cronSecret}` || querySecret === cronSecret) {
-      return true;
-    }
-    return false;
+    return safeCompareSecret(bearerToken, cronSecret) || safeCompareSecret(querySecret, cronSecret);
   }
 
-  const host = req.headers.get("host") || "";
-  if (
-    process.env.NODE_ENV === "development" ||
-    host.includes("localhost") ||
-    host.includes("127.0.0.1")
-  ) {
-    return true;
-  }
-
-  return false;
+  return process.env.NODE_ENV === "development";
 }
 
 async function handleCronExecution(req: NextRequest) {
+  const rl = checkRateLimit(`cron-abandoned:${getClientIp(req)}`, { limit: 20, windowMs: 60 * 1000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds) } }
+    );
+  }
   if (!isAuthorized(req)) {
     return NextResponse.json(
       {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { CartItemSchema } from "@/lib/validations";
 import { getSessionOrUserId, getOrCreateCartSession, getExistingCartSession } from "@/lib/cart-session";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function GET() {
   const sessionOrUserId = await getSessionOrUserId();
@@ -37,6 +38,13 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const rl = checkRateLimit(`cart-post:${getClientIp(req)}`, { limit: 40, windowMs: 60 * 1000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { success: false, error: "Too many cart requests. Please wait a moment." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds) } }
+    );
+  }
   try {
     const body = await req.json();
     const parsed = CartItemSchema.parse(body);

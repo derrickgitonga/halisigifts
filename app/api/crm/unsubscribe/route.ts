@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
+  const rl = checkRateLimit(`crm-unsub:${getClientIp(req)}`, { limit: 20, windowMs: 60 * 1000 });
+  if (!rl.allowed) {
+    return new NextResponse(renderHtml("Too Many Requests", "Please wait a moment before trying again."), {
+      status: 429,
+      headers: { "Content-Type": "text/html; charset=utf-8", "Retry-After": String(rl.retryAfterSeconds) },
+    });
+  }
   const token = req.nextUrl.searchParams.get("token");
 
   if (!token) {

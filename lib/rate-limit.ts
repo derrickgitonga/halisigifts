@@ -1,3 +1,5 @@
+import { timingSafeEqual } from "crypto";
+
 interface RateLimitRecord {
   count: number;
   resetAt: number;
@@ -77,4 +79,21 @@ export function resetRateLimit(key: string): void {
 
 export function clearAllRateLimits(): void {
   rateLimitStore.clear();
+}
+
+export function getClientIp(req: Request): string {
+  const cfIp = req.headers.get("cf-connecting-ip")?.trim();
+  if (cfIp) return cfIp;
+  const realIp = req.headers.get("x-real-ip")?.trim();
+  if (realIp) return realIp;
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || "127.0.0.1";
+}
+
+export function safeCompareSecret(provided: string | null | undefined, expected: string | null | undefined): boolean {
+  if (!provided || !expected) return false;
+  const a = Buffer.from(provided, "utf8");
+  const b = Buffer.from(expected, "utf8");
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
 }

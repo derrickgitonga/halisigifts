@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/auth-guard";
 import { getUniqueBlogSlug } from "@/lib/slug";
-import { invalidateBlogCache } from "@/lib/blog";
+import { invalidateBlogCache, sanitizeBlogHtml } from "@/lib/blog";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -47,7 +47,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
     const body = await req.json();
     const title = (body.title || "").trim() || existing.title;
-    const content = (body.content || "").trim() || existing.content;
+    const content = body.content ? sanitizeBlogHtml(body.content.trim()) : existing.content;
 
     let slug = existing.slug;
     if (body.slug && body.slug.trim() !== existing.slug) {

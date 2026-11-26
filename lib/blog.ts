@@ -3,6 +3,14 @@ import { prisma } from "@/lib/prisma";
 
 export const DEFAULT_BLOG_COVER = "/videos/hero-poster.jpg";
 
+export function sanitizeBlogHtml(html: string): string {
+  return html
+    .replace(/<(script|iframe|object|embed|applet|form|meta|link|base)[^>]*>[\s\S]*?<\/\1>/gi, "")
+    .replace(/<(script|iframe|object|embed|applet|form|meta|link|base)[^>]*\/?>/gi, "")
+    .replace(/\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/(href|src)\s*=\s*(["'])\s*(?:javascript|vbscript|data:text\/html):[^"']*\2/gi, '$1=$2#$2');
+}
+
 export function extractFirstImageFromHtml(html: string | null | undefined): string | null {
   if (!html) return null;
   const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
@@ -80,6 +88,7 @@ export async function getBlogPostBySlug(slug: string) {
     if (!post || !post.published) return null;
     return {
       ...post,
+      content: sanitizeBlogHtml(post.content),
       coverImage: resolveBlogCoverImage(post.coverImage, post.content),
     };
   } catch {
