@@ -102,11 +102,20 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Cache-Control", value: "no-store" }],
       },
       {
-        source: "/:all*(svg|jpg|jpeg|png|webp|avif|ico|woff|woff2|mp4|webm)",
+        source: "/:all*(svg|jpg|jpeg|png|webp|avif|woff|woff2|mp4|webm)",
         headers: [
           {
             key: "Cache-Control",
             value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/(favicon.ico|halisi-favicon.ico|halisi-icon.png|icon.png|apple-icon.png)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, must-revalidate",
           },
         ],
       },
