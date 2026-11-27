@@ -326,18 +326,25 @@ export default function CheckoutDelivery({ cartItems = [], onChange }: Props) {
               <label className={labelClass}>
                 Destination County <span className="normal-case text-black/40 font-normal tracking-normal">(optional)</span>
               </label>
-              <select
-                value={county ?? ""}
-                onChange={handleCounty}
-                className={inputClass}
-              >
-                <option value="">Select county (optional)</option>
-                {KENYA_COUNTIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={county ?? ""}
+                  onChange={handleCounty}
+                  className={`${inputClass} appearance-none pr-10 cursor-pointer`}
+                >
+                  <option value="">Select county (optional)</option>
+                  {KENYA_COUNTIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                <span className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-black/60">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </div>
             </div>
 
             <div>
@@ -364,21 +371,28 @@ export default function CheckoutDelivery({ cartItems = [], onChange }: Props) {
           <div className="space-y-4">
             <div>
               <label className={labelClass}>County</label>
-              <select
-                value={county ?? ""}
-                onChange={handleCounty}
-                required
-                className={inputClass}
-              >
-                <option value="" disabled>
-                  Select your county
-                </option>
-                {KENYA_COUNTIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+              <div className="relative">
+                <select
+                  value={county ?? ""}
+                  onChange={handleCounty}
+                  required
+                  className={`${inputClass} appearance-none pr-10 cursor-pointer`}
+                >
+                  <option value="" disabled>
+                    Select your county
                   </option>
-                ))}
-              </select>
+                  {KENYA_COUNTIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                <span className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-black/60">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </div>
             </div>
 
             {county && (
