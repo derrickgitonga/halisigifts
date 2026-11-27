@@ -320,6 +320,27 @@ export default function CheckoutForm() {
 
       const data = await res.json();
       if (data.success) {
+        const purchaseContentIds = cartItems.map((it) => it.product.id);
+        const purchaseNumItems = cartItems.reduce((acc, it) => acc + it.quantity, 0);
+
+        trackEvent(
+          "Purchase",
+          {
+            content_ids: purchaseContentIds,
+            content_type: "product",
+            value: orderTotal,
+            currency: "KES",
+            num_items: purchaseNumItems,
+            order_id: data.orderId,
+          },
+          data.orderId
+        );
+        try {
+          sessionStorage.setItem(`halisi_purchase_${data.orderId}`, "1");
+        } catch {
+          // Ignore storage errors
+        }
+
         window.dispatchEvent(new Event("cart-updated"));
 
         if (delivery.paymentMethod === "MPESA" && amountDueNow > 0) {

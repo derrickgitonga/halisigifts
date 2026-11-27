@@ -23,6 +23,15 @@ export default function OrderPurchaseTracker({
     if (hasTracked.current || !orderId) return;
     hasTracked.current = true;
 
+    let alreadyTracked = false;
+    try {
+      alreadyTracked = sessionStorage.getItem(`halisi_purchase_${orderId}`) === "1";
+      sessionStorage.setItem(`halisi_purchase_${orderId}`, "1");
+    } catch {
+      // Ignore storage errors
+    }
+    if (alreadyTracked) return;
+
     // Meta Pixel Purchase
     trackEvent(
       "Purchase",
