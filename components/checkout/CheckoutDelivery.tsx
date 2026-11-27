@@ -403,45 +403,17 @@ export default function CheckoutDelivery({ cartItems = [], onChange }: Props) {
         <div className="space-y-3">
           <label className={labelClass}>Payment Method</label>
 
-          {fulfillment === "DELIVERY" ? (
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="MPESA"
-                checked={paymentMethod === "MPESA"}
-                onChange={() => handlePayment("MPESA")}
-                className="accent-gold"
-              />
-              <span className="text-sm font-medium">M-Pesa</span>
-            </label>
-          ) : (
-            <div className="space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="MPESA"
-                  checked={paymentMethod === "MPESA"}
-                  onChange={() => handlePayment("MPESA")}
-                  className="accent-gold"
-                />
-                <span className="text-sm font-medium">M-Pesa</span>
-              </label>
-
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="CASH_ON_DELIVERY"
-                  checked={paymentMethod === "CASH_ON_DELIVERY"}
-                  onChange={() => handlePayment("CASH_ON_DELIVERY")}
-                  className="accent-gold"
-                />
-                <span className="text-sm font-medium">Cash / Pay at Shop</span>
-              </label>
-            </div>
-          )}
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="MPESA"
+              checked={paymentMethod === "MPESA"}
+              onChange={() => handlePayment("MPESA")}
+              className="accent-gold"
+            />
+            <span className="text-sm font-medium">M-Pesa</span>
+          </label>
         </div>
 
         {fulfillment === "DELIVERY" && (
