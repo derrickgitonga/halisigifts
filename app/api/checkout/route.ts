@@ -151,15 +151,18 @@ export async function POST(req: NextRequest) {
 
     const validatedEngravingFee = validatedEngravedCount * 200;
 
+    const isOwnTransport = fulfillment === "OWN_TRANSPORT";
     const validatedDiscountAmount =
-      validatedEngravingFee === 0 && payFullUpfrontForDiscount
+      !isOwnTransport && validatedEngravingFee === 0 && payFullUpfrontForDiscount
         ? Math.round(subtotal * 0.05)
         : 0;
 
     const total = subtotal + deliveryFee + validatedEngravingFee - validatedDiscountAmount;
 
     const isFullPrepayment =
-      validatedEngravingFee > 0 || (payFullUpfrontForDiscount && validatedDiscountAmount > 0);
+      isOwnTransport ||
+      validatedEngravingFee > 0 ||
+      (payFullUpfrontForDiscount && validatedDiscountAmount > 0);
     const amountDueNow = isFullPrepayment ? total : deliveryFee;
     const amountDueOnDelivery = isFullPrepayment ? 0 : subtotal;
 

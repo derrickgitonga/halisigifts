@@ -400,11 +400,12 @@ export default function CheckoutForm() {
   const deliveryFee = delivery.resolution.fee;
   const engravingFee = delivery.engravingFee;
   const isEngraved = engravingFee > 0;
+  const isOwnTransport = delivery.fulfillment === "OWN_TRANSPORT";
 
-  const discountAmount = (!isEngraved && payFullUpfrontForDiscount) ? Math.round(subtotal * 0.05) : 0;
+  const discountAmount = (!isEngraved && !isOwnTransport && payFullUpfrontForDiscount) ? Math.round(subtotal * 0.05) : 0;
   const orderTotal = subtotal + deliveryFee + engravingFee - discountAmount;
 
-  const isFullPrepayment = isEngraved || (payFullUpfrontForDiscount && discountAmount > 0);
+  const isFullPrepayment = isOwnTransport || isEngraved || (payFullUpfrontForDiscount && discountAmount > 0);
   const amountDueNow = isFullPrepayment ? orderTotal : deliveryFee;
   const amountDueOnDelivery = isFullPrepayment ? 0 : subtotal;
 
@@ -562,7 +563,28 @@ export default function CheckoutForm() {
           )}
         </div>
 
-        {isEngraved ? (
+        {isOwnTransport ? (
+          <>
+            <div className="border-t border-black/10 pt-3 flex justify-between items-baseline text-sm text-black/70">
+              <span>Order Total (incl. KSh 100 errands fee)</span>
+              <span className="font-semibold text-black">{formatCurrency(orderTotal)}</span>
+            </div>
+
+            <div className="bg-orange-50/70 border border-orange-200 rounded-lg p-4 space-y-1.5">
+              <div className="flex justify-between items-baseline">
+                <span className="font-bold text-xs uppercase tracking-wider text-black font-label-sm">
+                  Pay Now
+                </span>
+                <span className="text-xl font-bold text-gold">
+                  {formatCurrency(amountDueNow)}
+                </span>
+              </div>
+              <p className="text-black/70 text-xs leading-relaxed">
+                Full order payment plus KSh 100 errands fee is required upfront for Own Transport.
+              </p>
+            </div>
+          </>
+        ) : isEngraved ? (
           <>
             {showDiscountRemovedNotice && (
               <div className="p-2.5 bg-amber-50 border border-amber-200 text-amber-800 rounded text-xs">
