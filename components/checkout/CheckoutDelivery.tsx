@@ -276,53 +276,13 @@ export default function CheckoutDelivery({ cartItems = [], onChange }: Props) {
       {/* Fulfillment Section */}
       <div className="bg-white border border-black/10 rounded-lg p-6 space-y-6">
         <h2 className="font-headline-md text-headline-md border-b border-black/10 pb-4">
-          Fulfillment
+          Delivery
         </h2>
 
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => handleFulfillment("DELIVERY")}
-            className={`p-4 rounded-lg border text-left transition-colors duration-200 ${
-              fulfillment === "DELIVERY"
-                ? "border-gold bg-gold/5"
-                : "border-black/15 hover:border-black/30"
-            }`}
-          >
-            <p className="font-semibold text-sm">Delivery</p>
-            <p className="text-xs text-black/50 mt-0.5">KSh 250</p>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleFulfillment("PICKUP")}
-            className={`p-4 rounded-lg border text-left transition-colors duration-200 ${
-              fulfillment === "PICKUP"
-                ? "border-gold bg-gold/5"
-                : "border-black/15 hover:border-black/30"
-            }`}
-          >
-            <p className="font-semibold text-sm">Pickup at shop</p>
-            <p className="text-xs text-black/50 mt-0.5">Free</p>
-          </button>
+        <div className="p-4 rounded-lg border border-gold bg-gold/5 text-left">
+          <p className="font-semibold text-sm">Nationwide Delivery</p>
+          <p className="text-xs text-black/50 mt-0.5">Flat KSh 250 across Kenya</p>
         </div>
-
-        {fulfillment === "PICKUP" && (
-          <div className="text-sm text-black/70 space-y-1">
-            <p className="font-medium text-black">
-              Accra Road, Accra Trade Centre Building, 2nd Floor, Shop SF21
-            </p>
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=Accra+Trade+Centre+Building,+Accra+Road,+Nairobi"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-gold hover:underline font-semibold text-xs"
-            >
-              <span className="material-symbols-outlined text-sm">pin_drop</span>
-              <span>View Map Pin & Directions</span>
-            </a>
-          </div>
-        )}
 
         {fulfillment === "DELIVERY" && (
           <div className="space-y-4">
