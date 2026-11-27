@@ -24,6 +24,16 @@ export default function CheckoutForm() {
   const [cartItems, setCartItems] = useState<CartItemData[]>([]);
   const [payFullUpfrontForDiscount, setPayFullUpfrontForDiscount] = useState(false);
   const [showDiscountRemovedNotice, setShowDiscountRemovedNotice] = useState(false);
+  const [stkModal, setStkModal] = useState<{
+    orderId: string;
+    orderNumber: string;
+    amount: number;
+    phone: string;
+    state: "waiting" | "paid" | "failed";
+    message: string;
+    receipt?: string | null;
+  } | null>(null);
+  const [retryingStk, setRetryingStk] = useState(false);
   const hasTrackedCheckoutRef = useRef(false);
 
   const [formData, setFormData] = useState({
@@ -175,6 +185,103 @@ export default function CheckoutForm() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!stkModal || stkModal.state !== "waiting") return;
+    let attempts = 0;
+    const maxAttempts = 30;
+    const timer = setInterval(async () => {
+      attempts += 1;
+      try {
+        const res = await fetch(`/api/payments/payhero/status?orderId=${encodeURIComponent(stkModal.orderId)}`);
+        const data = await res.json();
+        if (data.paid || data.status === "PAID") {
+          clearInterval(timer);
+          setStkModal((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  state: "paid",
+                  receipt: data.receipt || null,
+                  message: "Payment received. Redirecting to your order confirmation...",
+                }
+              : null
+          );
+          setTimeout(() => {
+            router.push(`/order/${stkModal.orderId}`);
+          }, 1800);
+          return;
+        }
+        if (data.status === "FAILED") {
+          clearInterval(timer);
+          setStkModal((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  state: "failed",
+                  message: "The M-Pesa prompt was cancelled or failed. You can resend the prompt below.",
+                }
+              : null
+          );
+          return;
+        }
+      } catch {
+        // Keep polling until maxAttempts
+      }
+      if (attempts >= maxAttempts) {
+        clearInterval(timer);
+        setStkModal((prev) =>
+          prev
+            ? {
+                ...prev,
+                state: "failed",
+                message: "Still waiting for confirmation. If you already paid, continue to your order page or resend the prompt.",
+              }
+            : null
+        );
+      }
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [stkModal, router]);
+
+  const handleResendStk = async () => {
+    if (!stkModal) return;
+    setRetryingStk(true);
+    try {
+      const res = await fetch("/api/payments/payhero/stk-push", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: stkModal.orderId, phoneNumber: stkModal.phone }),
+      });
+      const data = await res.json();
+      if (data.alreadyPaid) {
+        router.push(`/order/${stkModal.orderId}`);
+        return;
+      }
+      if (data.success) {
+        setStkModal((prev) =>
+          prev
+            ? {
+                ...prev,
+                state: "waiting",
+                message: "M-Pesa PIN prompt resent to your phone. Enter your PIN to complete payment.",
+              }
+            : null
+        );
+      } else {
+        setStkModal((prev) =>
+          prev ? { ...prev, state: "failed", message: data.error || "Could not resend prompt." } : null
+        );
+      }
+    } catch {
+      setStkModal((prev) =>
+        prev ? { ...prev, state: "failed", message: "Network error while resending prompt." } : null
+      );
+    } finally {
+      setRetryingStk(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (cartItems.length === 0) {
@@ -214,6 +321,36 @@ export default function CheckoutForm() {
       const data = await res.json();
       if (data.success) {
         window.dispatchEvent(new Event("cart-updated"));
+
+        if (delivery.paymentMethod === "MPESA" && amountDueNow > 0) {
+          try {
+            const stkRes = await fetch("/api/payments/payhero/stk-push", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderId: data.orderId,
+                phoneNumber: formData.phoneNumber,
+              }),
+            });
+            const stkData = await stkRes.json();
+
+            if (stkData.success && !stkData.alreadyPaid) {
+              setStkModal({
+                orderId: data.orderId,
+                orderNumber: data.orderNumberDisplay || data.orderId,
+                amount: stkData.amount || amountDueNow,
+                phone: formData.phoneNumber,
+                state: "waiting",
+                message:
+                  stkData.message ||
+                  "M-Pesa PIN prompt sent to your phone. Enter your PIN to complete payment.",
+              });
+              return;
+            }
+          } catch {
+            // Fall through to order confirmation if STK trigger fails
+          }
+        }
 
         const whatsappUrl = getWhatsAppOrderUrl({
           orderId: data.orderId,
@@ -536,6 +673,79 @@ export default function CheckoutForm() {
           .
         </p>
       </div>
+
+      {stkModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-black/15 text-center space-y-5">
+            <div
+              className={`w-14 h-14 mx-auto rounded-full flex items-center justify-center ${
+                stkModal.state === "paid"
+                  ? "bg-emerald-100 text-emerald-700"
+                  : stkModal.state === "failed"
+                  ? "bg-amber-100 text-amber-700"
+                  : "bg-[#266e00]/10 text-[#266e00]"
+              }`}
+            >
+              <span className="material-symbols-outlined text-3xl">
+                {stkModal.state === "paid"
+                  ? "check_circle"
+                  : stkModal.state === "failed"
+                  ? "error"
+                  : "smartphone"}
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-black/50">
+                Order {stkModal.orderNumber}
+              </p>
+              <h3 className="font-heading text-xl font-bold text-black">
+                {stkModal.state === "paid"
+                  ? "M-Pesa Payment Confirmed"
+                  : stkModal.state === "failed"
+                  ? "M-Pesa Prompt Not Completed"
+                  : "Check Your Phone for M-Pesa"}
+              </h3>
+              <p className="text-sm font-semibold text-[#266e00]">
+                {formatCurrency(stkModal.amount)} &middot; {stkModal.phone}
+              </p>
+              <p className="text-xs text-black/70 leading-relaxed pt-1">{stkModal.message}</p>
+              {stkModal.receipt && (
+                <p className="text-xs font-mono font-bold text-emerald-700 pt-1">
+                  Receipt: {stkModal.receipt}
+                </p>
+              )}
+            </div>
+
+            {stkModal.state === "waiting" && (
+              <div className="flex items-center justify-center gap-2 text-xs text-black/60">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                <span>Waiting for M-Pesa confirmation...</span>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-2 pt-2">
+              {stkModal.state === "failed" && (
+                <button
+                  type="button"
+                  disabled={retryingStk}
+                  onClick={handleResendStk}
+                  className="w-full bg-[#266e00] hover:bg-black text-white text-xs uppercase tracking-wider font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {retryingStk ? "Sending Prompt..." : "Resend M-Pesa Prompt"}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => router.push(`/order/${stkModal.orderId}`)}
+                className="w-full border border-black/20 hover:border-black text-black text-xs uppercase tracking-wider font-semibold py-3 rounded-lg transition-colors"
+              >
+                Continue to Order Page
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }
