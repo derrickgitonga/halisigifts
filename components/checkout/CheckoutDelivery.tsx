@@ -97,7 +97,7 @@ export default function CheckoutDelivery({ cartItems = [], onChange }: Props) {
   ) => {
     const resolution = resolveDelivery(nextCounty, nextFulfillment);
     let finalPayment = nextPayment;
-    if (nextFulfillment === "DELIVERY" && nextPayment !== "MPESA") {
+    if ((nextFulfillment === "DELIVERY" || nextFulfillment === "OWN_TRANSPORT") && nextPayment !== "MPESA") {
       finalPayment = "MPESA";
       setPaymentMethod("MPESA");
     }
@@ -129,8 +129,8 @@ export default function CheckoutDelivery({ cartItems = [], onChange }: Props) {
   const handleFulfillment = (next: Fulfillment) => {
     setFulfillment(next);
     const nextCounty = next === "PICKUP" ? null : county;
-    const nextPayment = next === "DELIVERY" ? "MPESA" : paymentMethod;
-    if (next === "DELIVERY" && paymentMethod !== "MPESA") {
+    const nextPayment = next === "DELIVERY" || next === "OWN_TRANSPORT" ? "MPESA" : paymentMethod;
+    if ((next === "DELIVERY" || next === "OWN_TRANSPORT") && paymentMethod !== "MPESA") {
       setPaymentMethod("MPESA");
     }
     emit(next, nextCounty, nextPayment);
@@ -276,13 +276,89 @@ export default function CheckoutDelivery({ cartItems = [], onChange }: Props) {
       {/* Fulfillment Section */}
       <div className="bg-white border border-black/10 rounded-lg p-6 space-y-6">
         <h2 className="font-headline-md text-headline-md border-b border-black/10 pb-4">
-          Delivery
+          Fulfillment
         </h2>
 
-        <div className="p-4 rounded-lg border border-gold bg-gold/5 text-left">
-          <p className="font-semibold text-sm">Nationwide Delivery</p>
-          <p className="text-xs text-black/50 mt-0.5">Flat KSh 250 across Kenya</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => handleFulfillment("DELIVERY")}
+            className={`p-4 rounded-lg border text-left transition-colors duration-200 ${
+              fulfillment === "DELIVERY"
+                ? "border-gold bg-gold/5"
+                : "border-black/15 hover:border-black/30"
+            }`}
+          >
+            <p className="font-semibold text-sm">Delivery</p>
+            <p className="text-xs text-black/50 mt-0.5">KSh 250</p>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleFulfillment("OWN_TRANSPORT")}
+            className={`p-4 rounded-lg border text-left transition-colors duration-200 ${
+              fulfillment === "OWN_TRANSPORT"
+                ? "border-orange-500 bg-orange-50/70"
+                : "border-orange-300/70 bg-orange-50/30 hover:border-orange-400"
+            }`}
+          >
+            <p className="font-semibold text-sm text-black">Own Transport</p>
+            <p className="text-xs text-orange-800/80 mt-0.5">KSh 100 errands fee</p>
+          </button>
         </div>
+
+        {fulfillment === "OWN_TRANSPORT" && (
+          <div className="space-y-4">
+            <div className="p-4 rounded-lg bg-orange-50/70 border border-orange-200 space-y-1.5 text-xs text-orange-950 leading-relaxed">
+              <div className="flex items-center gap-1.5 font-bold text-orange-950 text-sm">
+                <span className="material-symbols-outlined text-base text-orange-600">local_shipping</span>
+                <span>Customer Own Transport (Errands Fee: KSh 100)</span>
+              </div>
+              <p className="text-orange-950/85">
+                Our team will deliver your parcel directly to your preferred bus or matatu stage, courier office, or rider in town for an errands fee of KSh 100.
+              </p>
+              <p className="text-orange-900/75">
+                Any remaining transportation charges from your chosen carrier will be communicated and billed to you directly.
+              </p>
+            </div>
+
+            <div>
+              <label className={labelClass}>
+                Destination County <span className="normal-case text-black/40 font-normal tracking-normal">(optional)</span>
+              </label>
+              <select
+                value={county ?? ""}
+                onChange={handleCounty}
+                className={inputClass}
+              >
+                <option value="">Select county (optional)</option>
+                {KENYA_COUNTIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClass}>
+                Preferred Carrier, Stage or Drop-off Point *
+              </label>
+              <input
+                type="text"
+                name="addressLine"
+                required
+                value={addressLine}
+                onChange={handleAddress}
+                placeholder="e.g. Easy Coach, 2NK Sacco, North Rift, Mololine, Guardian, Sendy"
+                className={inputClass}
+              />
+              <p className="text-[11px] text-black/50 mt-1">
+                Specify the parcel courier office, bus/matatu stage, or rider details where our team should deliver the package.
+              </p>
+            </div>
+          </div>
+        )}
 
         {fulfillment === "DELIVERY" && (
           <div className="space-y-4">

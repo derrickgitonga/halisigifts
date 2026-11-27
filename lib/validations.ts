@@ -36,7 +36,7 @@ export const CheckoutSchema = z
   .object({
     shippingAddress: ShippingAddressSchema,
     phoneNumber: z.string().optional(),
-    fulfillment: z.enum(["PICKUP", "DELIVERY"]),
+    fulfillment: z.enum(["PICKUP", "DELIVERY", "OWN_TRANSPORT"]),
     county: z.string().nullable().optional(),
     paymentMethod: z.enum(["MPESA", "CARD", "CASH_ON_DELIVERY"]),
     payFullUpfrontForDiscount: z.boolean().optional().default(false),
@@ -58,6 +58,15 @@ export const CheckoutSchema = z
         });
       }
     }
+    if (data.fulfillment === "OWN_TRANSPORT") {
+      if (!data.shippingAddress.addressLine || data.shippingAddress.addressLine.trim().length < 3) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Preferred carrier, bus stage, or drop-off point is required for Own Transport",
+          path: ["shippingAddress", "addressLine"],
+        });
+      }
+    }
     if (data.paymentMethod === "CASH_ON_DELIVERY" && data.fulfillment !== "PICKUP") {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -65,10 +74,10 @@ export const CheckoutSchema = z
         path: ["paymentMethod"],
       });
     }
-    if (data.fulfillment === "DELIVERY" && data.paymentMethod !== "MPESA") {
+    if ((data.fulfillment === "DELIVERY" || data.fulfillment === "OWN_TRANSPORT") && data.paymentMethod !== "MPESA") {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Only M-Pesa is accepted for delivery orders",
+        message: "Only M-Pesa is accepted for delivery and own transport orders",
         path: ["paymentMethod"],
       });
     }

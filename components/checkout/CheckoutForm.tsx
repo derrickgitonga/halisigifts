@@ -358,7 +358,7 @@ export default function CheckoutForm() {
           fullName: formData.fullName,
           phoneNumber: formData.phoneNumber,
           email: formData.email,
-          fulfillment: delivery.fulfillment,
+          fulfillment: delivery.fulfillment === "PICKUP" ? "PICKUP" : "DELIVERY",
           county: delivery.county,
           addressLine: delivery.addressLine,
           items: cartItems.map((it) => ({
