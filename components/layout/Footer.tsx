@@ -1,5 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
+import { SEO_COLLECTIONS } from "@/lib/seo-collections";
+
+const BRAND_STYLE_LINKS = SEO_COLLECTIONS.filter(
+  (c) => c.group === "brand" || c.group === "style"
+);
+const OCCASION_BUDGET_LINKS = SEO_COLLECTIONS.filter(
+  (c) => c.group === "recipient" || c.group === "occasion" || c.group === "budget"
+);
 
 export default function Footer() {
   return (
@@ -121,8 +129,43 @@ export default function Footer() {
 
         </div>
 
+        <div className="w-full mt-7 pt-5 border-t border-white/10 space-y-3">
+          <div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-gold/90 block mb-1.5">
+              Shop Watches by Brand &amp; Style
+            </span>
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-white/55">
+              {BRAND_STYLE_LINKS.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={item.path}
+                  className="hover:text-gold transition-colors"
+                >
+                  {item.shortLabel}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-gold/90 block mb-1.5">
+              Shop Gifts by Occasion &amp; Budget
+            </span>
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-white/55">
+              {OCCASION_BUDGET_LINKS.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={item.path}
+                  className="hover:text-gold transition-colors"
+                >
+                  {item.shortLabel}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Compact Bottom Bar */}
-        <div className="w-full mt-6 pt-4 border-t border-white/10 text-xs text-white/40 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="w-full mt-5 pt-4 border-t border-white/10 text-xs text-white/40 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>&copy; {new Date().getFullYear()} Halisi Gifts Shop. All Rights Reserved.</span>
           <div className="flex items-center gap-3">
             <Link href="/privacy-policy" className="hover:text-gold transition-colors">
