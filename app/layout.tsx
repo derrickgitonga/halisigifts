@@ -49,8 +49,9 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/halisi-icon.png", sizes: "512x512", type: "image/png" },
-      { url: "/halisi-favicon.ico", sizes: "48x48" },
+      { url: "/halisi-favicon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/halisi-favicon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/halisi-favicon.ico", sizes: "48x48", type: "image/x-icon" },
     ],
     shortcut: "/halisi-favicon.ico",
     apple: "/apple-icon.png",
@@ -127,8 +128,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="light">
       <head>
-        <link rel="icon" href="/halisi-icon.png" type="image/png" sizes="512x512" />
-        <link rel="icon" href="/halisi-favicon.ico" sizes="48x48" />
         {metaDomainVerification && (
           <meta name="facebook-domain-verification" content={metaDomainVerification} />
         )}
